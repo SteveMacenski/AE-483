@@ -1,7 +1,7 @@
 %% AE 483 Lab 1 Given flight data from onboard IMU and motion capture system, give information about the data and plot the quad copter in the time domain
 % Also, integrate the data to show a relationship/no relationship between
 % IMU and mocap data sets. 
-
+ 
 load('flight_data.mat');
 %flight path figure
 figure(1)
