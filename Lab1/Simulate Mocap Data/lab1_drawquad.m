@@ -8,7 +8,7 @@ function [output] = lab1_drawquad(mocap)
 mocap = transpose(mocap);
 t = mocap(1,:);                             %parsing input the for data columns
 dt = mocap(1,2:end) - mocap(1,1:end-1);
-
+ 
 q10 = mocap(2:4,:);
 phi = mocap(5,:);
 theta = mocap(6,:);
