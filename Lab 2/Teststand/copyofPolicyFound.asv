@@ -1,0 +1,35 @@
+function u = Example_policy_teststand(t,x)
+
+% Your policy will take in the "actual" state vector, perform a (possibly
+% noisy) measurement of the state vector, process that measurement, and
+% output the desired control.
+% For the teststand, your state vector is [theta;q;omegar1;omegar3] and
+% your control vector is [u3].
+
+% K is LQR gain matrix
+persistent K
+
+if isempty(K)
+    J = 0.004; % moment of inertia
+    
+    Q = [100, 0;
+         0, 1];
+    R = 1000;
+    
+    dfdx = [0, 1;
+            0, 0];
+    dfdu = [0; 
+            1.0/J];
+        
+%     A = dfdx;
+%     B = dfdu;
+%     [K,S,e]=lqr(A,B,Q,R);
+    dt = 0.001;
+    A = eye(2) + dt * dfdx;
+    B = dt * dfdu;
+    [P,E,K] = dare(A,B,Q,R)
+    K
+end
+
+%%% CONTROL
+u = -K * x;
