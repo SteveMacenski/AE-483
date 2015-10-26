@@ -12,55 +12,66 @@ Acc = [0 1 0 0;
       0 0 0 1;
       0 0 0 0];
   
- Bcc = [0;
+ Bc = [0;
        0;
        0;
        1/J2];
  n=5000;
-  
+ 
+ Qn_outer = [1000 0;0 .01];
+ Q_outer = [1000 0;0 .01];
+ R_outer = 5000;
+ Qn_inner = [8000 0;0 .01];
+ Q_inner = [8000 0;0 .01];
+ R_inner = 5000;
+ 
+ 
  Ad = eye(4) + .001*Acc;
- Bd = Bcc*.001;
+ Bd = Bc*.001;
+ 
+ 
+ %outer 
+ 
 
  Ac = [0 1;0 0];
  dtouter = .02;
- dtinner = .001;
- 
- Bcinner = [0;1/J2];
  Bcouter = [0;-g];
  
  Adouter = eye(2) + dtouter*Ac;
- Adinner = eye(2) + dtinner*Ac;
- 
  Bdouter = Bcouter*dtouter;
- Bdinner = Bcinner*dtinner;
- 
  n = length(t); 
- 
- Q = eye(2);
- R = 1;
- Pinner{n+1} = eye(2);
+
+Pouter{n+1} = Qn_outer;
  for i=n:-1:1
-    Pinner{i} = Q + Adinner'*Pinner{i+1}*Adinner - Adinner'*Pinner{i+1}*Bdinner*inv(R+Bdinner'*Pinner{i+1}*Bdinner)*Bdinner'*Pinner{i+1}*Adinner;
-    Kinner(i,:) = inv(R+Bdinner'*Pinner{i+1}*Bdinner)*Bdinner'*Pinner{i+1}*Adinner;
+    Pouter{i} = Q_outer + Adouter'*Pouter{i+1}*Adouter - Adouter'*Pouter{i+1}*Bdouter*inv(R_outer+Bdouter'*Pouter{i+1}*Bdouter)*Bdouter'*Pouter{i+1}*Adouter;
+    Kouter(i,:) = inv(R_outer+Bdouter'*Pouter{i+1}*Bdouter)*Bdouter'*Pouter{i+1}*Adouter;
  end
-Pouter{n+1} = eye(2);
+ 
+ Acinner = [0 1; 0 0]; Bcinner = [0; 1/J2];
+ dt_inner = .001;
+ 
+ Adinner = eye(2) + dt_inner*Acinner;
+ Bdinner = dt_inner*Bcinner;
+ n = length(t);
+ 
+  Pinner{n+1} = Qn_inner;
  for i=n:-1:1
-    Pouter{i} = Q + Adouter'*Pouter{i+1}*Adouter - Adouter'*Pouter{i+1}*Bdouter*inv(R+Bdouter'*Pouter{i+1}*Bdouter)*Bdouter'*Pouter{i+1}*Adouter;
-    Kouter(i,:) = inv(R+Bdouter'*Pouter{i+1}*Bdouter)*Bdouter'*Pouter{i+1}*Adouter;
+    Pinner{i} = Q_inner + Adinner'*Pinner{i+1}*Adinner - Adinner'*Pinner{i+1}*Bdinner*inv(R_inner+Bdinner'*Pinner{i+1}*Bdinner)*Bdinner'*Pinner{i+1}*Adinner;
+    Kinner(i,:) = inv(R_inner+Bdinner'*Pinner{i+1}*Bdinner)*Bdinner'*Pinner{i+1}*Adinner;
  end
 
-phi = 10;
+phi = 1;
 xdesignouter = [1;0];
 xdesigninner = [phi;0];
 udesignouter = [0];
 udesigninner = [0];
 
 xd = [];
-xd(1:2,1) = [0;0];
-xd(3:4,1) = [0;0];
-xd(1:2,5002) = [0;0];
+xd(1:2,1) = [0;0];%xo outer
+xd(3:4,1) = [0;0]; %x0 inner
+tfinal = max(t);
 
-udouter = -Kouter*([0;0] - xdesignouter) + udesignouter;
+udouter = -Kouter(1,:)*([0;0] - xdesignouter) + udesignouter;
 
 for i=1:5000
     if (~mod(i,.02/.001)) 
