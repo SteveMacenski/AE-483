@@ -3,6 +3,7 @@
 % dts different for each loop corresponding to a system with different measurement rates
 % October 24, 2015
 clc;clear all;clf;
+t = linspace(0,5,5000);
 g = 9.81;
 J2 = .01;
 
@@ -15,17 +16,17 @@ Acc = [0 1 0 0;
        0;
        0;
        1/J2];
- 
- dt = .001;
- Add = eye(4) + dt*Acc;
- Bdd = Bcc*dt;
+ n=5000;
+  
+ Ad = eye(4) + .001*Acc;
+ Bd = Bcc*.001;
 
-Ac = [0 1;0 0];
+ Ac = [0 1;0 0];
  dtouter = .02;
  dtinner = .001;
  
  Bcinner = [0;1/J2];
- Bcouter = [0;-g*dtouter];
+ Bcouter = [0;-g];
  
  Adouter = eye(2) + dtouter*Ac;
  Adinner = eye(2) + dtinner*Ac;
@@ -33,9 +34,10 @@ Ac = [0 1;0 0];
  Bdouter = Bcouter*dtouter;
  Bdinner = Bcinner*dtinner;
  
+ n = length(t); 
+ 
  Q = eye(2);
  R = 1;
- n=5000;
  Pinner{n+1} = eye(2);
  for i=n:-1:1
     Pinner{i} = Q + Adinner'*Pinner{i+1}*Adinner - Adinner'*Pinner{i+1}*Bdinner*inv(R+Bdinner'*Pinner{i+1}*Bdinner)*Bdinner'*Pinner{i+1}*Adinner;
@@ -47,18 +49,17 @@ Pouter{n+1} = eye(2);
     Kouter(i,:) = inv(R+Bdouter'*Pouter{i+1}*Bdouter)*Bdouter'*Pouter{i+1}*Adouter;
  end
 
-phi = 10;
+phi = 1;
 xdesignouter = [1;0];
 xdesigninner = [phi;0];
 udesignouter = [0];
 udesigninner = [0];
 
 xd = [];
-xd(1:2,1) = [0;0];
-xd(3:4,1) = [0;0];
-xd(1:2,5002) = [0;0];
+xd(1:2,1) = [0;0];%xo outer
+xd(3:4,1) = [0;0]; %x0 inner
 
-udouter = -Kouter*([0;0] - xdesignouter) + udesignouter;
+udouter = -Kouter(1,:)*([0;0] - xdesignouter) + udesignouter;
 
 for i=1:5000
     if (~mod(i,.02/.001)) 
@@ -70,7 +71,7 @@ for i=1:5000
     
     ud(:,i) = udesigninner  - Kinner(i,:)*(xd(3:4,i) - xdesigninner);
     
-    xd(:,i+1) = Add*xd(:,i) + Bdd*ud(:,i);
+    xd(:,i+1) = Ad*xd(:,i) + Bd*ud(:,i);
     
 end
 
