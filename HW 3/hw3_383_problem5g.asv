@@ -2,7 +2,7 @@
 % Splitting the control loops into inner and outer sections, complete control with
 % dts different for each loop corresponding to a system with different measurement rates
 % October 24, 2015
-clc;clear all;clf;
+clc;clear all;
 g = 9.81;
 J2 = .01;
 
@@ -36,16 +36,16 @@ Ac = [0 1;0 0];
  Q = eye(2);
  R = 1;
  n=5000;
- Pinner{n+1} = eye(2);
  for i=n:-1:1
-    Pinner{i} = Q + Adinner'*Pinner{i+1}*Adinner - Adinner'*Pinner{i+1}*Bdinner*inv(R+Bdinner'*Pinner{i+1}*Bdinner)*Bdinner'*Pinner{i+1}*Adinner;
-    Kinner(i,:) = inv(R+Bdinner'*Pinner{i+1}*Bdinner)*Bdinner'*Pinner{i+1}*Adinner;
+    P{i} = Q + Ad'*P{i+1}*Ad - Ad'*P{i+1}*Bd*inv(R+Bd'*P{i+1}*Bd)*Bd'*P{i+1}*Ad;
+    Kinner(i,:) = inv(R+Bd'*P{i+1}*Bd)*Bd'*P{i+1}*Ad;
  end
-Pouter{n+1} = eye(2);
+
  for i=n:-1:1
-    Pouter{i} = Q + Adouter'*Pouter{i+1}*Adouter - Adouter'*Pouter{i+1}*Bdouter*inv(R+Bdouter'*Pouter{i+1}*Bdouter)*Bdouter'*Pouter{i+1}*Adouter;
-    Kouter(i,:) = inv(R+Bdouter'*Pouter{i+1}*Bdouter)*Bdouter'*Pouter{i+1}*Adouter;
+    P{i} = Q + Ad'*P{i+1}*Ad - Ad'*P{i+1}*Bd*inv(R+Bd'*P{i+1}*Bd)*Bd'*P{i+1}*Ad;
+    Kouter(i,:) = inv(R+Bd'*P{i+1}*Bd)*Bd'*P{i+1}*Ad;
  end
+
 
 phi = 10;
 xdesignouter = [1;0];
@@ -73,9 +73,4 @@ for i=1:5000
     xd(:,i+1) = Add*xd(:,i) + Bdd*ud(:,i);
     
 end
-
-plot(1:i,xd(1,1:5000),'.',1:i,xd(2,1:5000),'.',1:i,xd(3,1:5000),'.',1:i,xd(4,1:5000),'.')
-
-
-
-
+%plot(j,xd(:,1),'o',j,xd(:,2),'o',j,xd(:,3),'o',j,xd(:,4),'o')
