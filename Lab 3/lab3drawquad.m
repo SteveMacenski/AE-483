@@ -1,17 +1,15 @@
 clc
 close all
 
-% Define "mocap" as a 7-by-N matrix, where 7 is the number of rows
-%         in the mocap message object, and N is the number of sample 
-%         measurements over time.
+mocap = transpose(mocap);
+t = mocap(1,:);                             %parsing input the for data columns
+dt = mocap(1,2:end) - mocap(1,1:end-1);
+ 
+q10 = mocap(2:4,:);
+phi = mocap(5,:);
+theta = mocap(6,:);
+psi = mocap(7,:);
 
-% Row 1: Time vector
-% Row 2: X position vector
-% Row 3: Y position vector
-% Row 4: Z position vector
-% Row 5: Theta_x vector
-% Row 6: Theta_y vector
-% Row 7: Theta_z vector
 
 t = mocap(1,:);
 dt = mocap(1,2:end) - mocap(1,1:end-1);
@@ -41,8 +39,9 @@ R = [cos(theta_y(1))*cos(theta_z(1)), -cos(theta_y(1))*sin(theta_z(1)), sin(thet
 % ROTATE FROM BODY FRAME TO MATLAB PLOT FRAME
 %%%%%
 %Enter your code here:
-%%%%%
-p2 = p1;
+%%%%%        
+p2 = R02*R*p1; 
+
 
 % ROTATE FROM WORLD FRAME TO MATLAB PLOT FRAME
 w2 = R02*w0;
@@ -69,6 +68,8 @@ while (i<length(t)-1)
         i = i+1;
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % YOUR CODE HERE TO COMPUTE p0
+       p0 = p0+repmat(q10(:,i),1,294);
+
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         R = [cos(theta_y(i))*cos(theta_z(i)), -cos(theta_y(i))*sin(theta_z(i)), sin(theta_y(i));
              cos(theta_x(i))*sin(theta_z(i))+cos(theta_z(i))*sin(theta_x(i))*sin(theta_y(i)), cos(theta_x(i))*cos(theta_z(i))-sin(theta_x(i))*sin(theta_y(i))*sin(theta_z(i)), -cos(theta_y(i))*sin(theta_x(i));
@@ -78,7 +79,7 @@ while (i<length(t)-1)
         %%%%%
         %Enter your code here:
         %%%%%
-        p0 = p1;
+        p0 = R*p1;
         
         % TRANSFORM FROM WORLD FRAME TO MATLAB DISPLAY FRAME
         p2 = R02*p0;
@@ -92,3 +93,5 @@ while (i<length(t)-1)
         drawnow;
     end
 end
+
+
