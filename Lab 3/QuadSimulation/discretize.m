@@ -44,4 +44,3 @@ else
     varargout{3}=T_o(:,1:end-1);
     varargout{4}=u_o(:,1:end-1);
 end
-

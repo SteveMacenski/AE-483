@@ -37,12 +37,12 @@ B_roll = dt*[0 ; 1/J1]; %B matrices
 B_pitch = dt*[0 ; 1/J2];
 B_yaw = dt*[0 ; 1/J3];
 
-Q_roll = eye(2);
-Q_pitch = eye(2);
-Q_yaw = eye(2);
-R_roll = 1;
-R_pitch = 1;
-R_yaw = 1;
+Q_roll = [100 0;0 2];
+Q_pitch = [100 0;0 2];
+Q_yaw = [100 0;0 2];
+R_roll = 70;
+R_pitch = 70;
+R_yaw = 70;
 
 [P,E,K_roll] = dare(A_roll,B_roll,Q_roll,R_roll); %Ks 
 [P,E,K_pitch] = dare(A_pitch,B_pitch,Q_pitch,R_pitch);
@@ -51,17 +51,14 @@ R_yaw = 1;
 x_roll = [x(7); x(10)];
 x_pitch = [x(8); x(11)];
 x_yaw = [x(9); x(12)];
-a = 0;
-b = 0;
-c = 0;
-a = [a;0];
-b = [b;0];
-c = [c;0];
-u(1) = -K_roll*(x_roll - a);
-u(2) = -K_pitch*(x_pitch - b);
-u(3) = -K_yaw*(x_yaw - c);
+a = u_outer(1);
+b = u_outer(2);
+c = u_outer(3);
+
+u(1) = -K_roll*[angles(1) - a; angularvelocity(1)];
+u(2) = -K_pitch*[angles(2) - b; angularvelocity(2)];
+u(3) = -K_yaw*[angles(3) - c; angularvelocity(3)];
 u(4) = u_outer(4);
-
-
-
-
+% K_roll
+% K_pitch
+% K_yaw

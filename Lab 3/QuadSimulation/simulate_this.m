@@ -4,7 +4,7 @@ clc
 
 % Initial conditions
 tspan=[0 5]; dt_inner=0.001; dt_outer=0.01;
-x0=zeros(12,1); x0(7)=pi/6; x0(8)=pi/6; x0(8)=pi/6;
+x0=zeros(12,1); x0(7)=pi/6;%x0(8)=pi/6; x0(8)=pi/6;
 
 % Identify your EOM function, policy functions and a force disturbance. 
 eom=@(t,x,u) Quad_EOM(x,u);
@@ -30,4 +30,3 @@ plot_basic
 
 % Clear persistent variables
 clear functions
-
