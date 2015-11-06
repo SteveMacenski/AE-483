@@ -1,20 +1,15 @@
 clc
 close all
 
-draymacenskifester = transpose(draymacenskifester);
-t = draymacenskifester(1,:);                             %parsing input the for data columns
-dt = draymacenskifester(1,2:end) - draymacenskifester(1,1:end-1);
- 
-q10 = draymacenskifester(2:4,:);
-phi = draymacenskifester(5,:);
-theta = draymacenskifester(6,:);
-psi = draymacenskifester(7,:);
+load('mocap');
+mocapn = transpose(mocap);
 
 
-t = draymacenskifester(1,:);
-dt = draymacenskifester(1,2:end) - draymacenskifester(1,1:end-1);
-x_pos = draymacenskifester(2,:); y_pos = draymacenskifester(3,:); z_pos = draymacenskifester(4,:);
-theta_x = draymacenskifester(5,:); theta_y = draymacenskifester(6,:); theta_z = draymacenskifester(7,:);
+t = mocapn(1,:);
+dt = mocapn(1,2:end) - mocapn(1,1:end-1);
+x_pos = mocapn(6,:); y_pos = mocapn(7,:); z_pos = mocapn(8,:);
+theta_x = mocapn(9,:); theta_y = mocapn(10,:); theta_z = mocapn(11,:);
+q10 = mocapn(6:8,:);
 
 %Use these mat files from Lab1
 % CREATE WORLD OBJECTS
@@ -39,9 +34,8 @@ R = [cos(theta_y(1))*cos(theta_z(1)), -cos(theta_y(1))*sin(theta_z(1)), sin(thet
 % ROTATE FROM BODY FRAME TO MATLAB PLOT FRAME
 %%%%%
 %Enter your code here:
-%%%%%        
-p2 = R02*R*p1; 
-
+%%%%%
+p2 = R02*R*p1;
 
 % ROTATE FROM WORLD FRAME TO MATLAB PLOT FRAME
 w2 = R02*w0;
@@ -68,11 +62,6 @@ while (i<length(t)-1)
         i = i+1;
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % YOUR CODE HERE TO COMPUTE p0
-       p0 = R*p1;
-
-       p0 = p0+repmat(q10(:,i),1,294);
-       p2 = R02*p0;
-
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         R = [cos(theta_y(i))*cos(theta_z(i)), -cos(theta_y(i))*sin(theta_z(i)), sin(theta_y(i));
              cos(theta_x(i))*sin(theta_z(i))+cos(theta_z(i))*sin(theta_x(i))*sin(theta_y(i)), cos(theta_x(i))*cos(theta_z(i))-sin(theta_x(i))*sin(theta_y(i))*sin(theta_z(i)), -cos(theta_y(i))*sin(theta_x(i));
@@ -82,9 +71,13 @@ while (i<length(t)-1)
         %%%%%
         %Enter your code here:
         %%%%%
+        p0 = R*p1;
+        
+        p0 = p0+repmat(q10(:,i),1,294);
+
         
         % TRANSFORM FROM WORLD FRAME TO MATLAB DISPLAY FRAME
-
+        p2 = R02*p0;
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -95,5 +88,3 @@ while (i<length(t)-1)
         drawnow;
     end
 end
-
-
