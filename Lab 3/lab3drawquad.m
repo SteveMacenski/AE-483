@@ -1,20 +1,20 @@
 clc
 close all
 
-mocap = transpose(mocap);
-t = mocap(1,:);                             %parsing input the for data columns
-dt = mocap(1,2:end) - mocap(1,1:end-1);
+draymacenskifester = transpose(draymacenskifester);
+t = draymacenskifester(1,:);                             %parsing input the for data columns
+dt = draymacenskifester(1,2:end) - draymacenskifester(1,1:end-1);
  
-q10 = mocap(2:4,:);
-phi = mocap(5,:);
-theta = mocap(6,:);
-psi = mocap(7,:);
+q10 = draymacenskifester(2:4,:);
+phi = draymacenskifester(5,:);
+theta = draymacenskifester(6,:);
+psi = draymacenskifester(7,:);
 
 
-t = mocap(1,:);
-dt = mocap(1,2:end) - mocap(1,1:end-1);
-x_pos = mocap(2,:); y_pos = mocap(3,:); z_pos = mocap(4,:);
-theta_x = mocap(5,:); theta_y = mocap(6,:); theta_z = mocap(7,:);
+t = draymacenskifester(1,:);
+dt = draymacenskifester(1,2:end) - draymacenskifester(1,1:end-1);
+x_pos = draymacenskifester(2,:); y_pos = draymacenskifester(3,:); z_pos = draymacenskifester(4,:);
+theta_x = draymacenskifester(5,:); theta_y = draymacenskifester(6,:); theta_z = draymacenskifester(7,:);
 
 %Use these mat files from Lab1
 % CREATE WORLD OBJECTS
@@ -68,7 +68,10 @@ while (i<length(t)-1)
         i = i+1;
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % YOUR CODE HERE TO COMPUTE p0
+       p0 = R*p1;
+
        p0 = p0+repmat(q10(:,i),1,294);
+       p2 = R02*p0;
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         R = [cos(theta_y(i))*cos(theta_z(i)), -cos(theta_y(i))*sin(theta_z(i)), sin(theta_y(i));
@@ -79,10 +82,9 @@ while (i<length(t)-1)
         %%%%%
         %Enter your code here:
         %%%%%
-        p0 = R*p1;
         
         % TRANSFORM FROM WORLD FRAME TO MATLAB DISPLAY FRAME
-        p2 = R02*p0;
+
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
