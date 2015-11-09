@@ -130,7 +130,7 @@ while (1)
     % YOUR CODE HERE (PROBLEM 6)
     %
     % Do gradient descent (i.e., take a step)
-    dq = [0;0;0];%%deelte and replace
+    dq = [0;0;0];
     drone.q = drone.q+dq;
     %
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -162,21 +162,16 @@ function gradf = GetGradient(drone,goal,obst,param)
 gradf = GetAttractiveGradient(drone,goal,param)+GetRepulsiveGradient(drone,obst,param);
 
 function gradfatt = GetAttractiveGradient(drone,goal,param)
-v = drone.q - goal.q;
-vnorm = sqrt(v'*v);
-
-if (vnorm <= param.batt)
-    gradfatt = param.katt * v;
-else 
-    gradfatt = param.katt * param.batt * (v/vnorm)
-end
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% YOUR CODE HERE (PROBLEM 1) %actually 4? 
+d = inf;
+dgrad = [0 0 0];
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function [d,dgrad] = SpherePlane(q,r,p,z)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 
+% YOUR CODE HERE (PROBLEM 2)
 d = z'*(p-q) - r;
 dgrad = z';
 %
@@ -184,35 +179,45 @@ dgrad = z';
 
 function [d,dgrad] = SphereHotDog(q,r,p1,p2,s)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 
+% YOUR CODE HERE (PROBLEM 3)
 v = (p1 - p2)/norm(p1-p2);
 w = q - p1;
 t = v'*w;
 
 if t<0
     Pclosest = p1;
-elseif t > norm(p2 - p1)
-    Pclosest = p2;
-else
-    Pclosest = p1 + t*v;
 end
+if
+v1 = q-p1;
+v2 = q-p2;
 
-vc = (q-Pclosest);
-d = norm(vc) - (r+s);
-dgrad = vc/norm(vc);
+if abs(v1) > abs(v2)
+    v_norm = sqrt(v2'*v2);
+    d = v_norm - (r+s);
+    dgrad = v/v_norm;
+end
+if abs(v2) >= abs(v1)
+    v_norm = sqrt(v1'*v1);
+    d = v_norm - (r+s);
+    dgrad = v/v_norm;
+end
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [d,dgrad] = SphereSphere(q,r,p,s) 
-v = q-p;
-v_norm = sqrt(v'*v);
-d = v_norm - (r+s);
-dgrad = v/v_norm;
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% YOUR CODE HERE (PROBLEM 4)
+%
+% drone.q is the current position of the quadrotor
+% goal.q is the goal position
+% param.katt and param.batt are the relevant constants
+%
+gradfatt = [0 0 0];
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function gradfrep = GetRepulsiveGradient(drone,obst,param)
-gradfrep = zeros(size(drone.q));
+gradfrep = [0 0 0];
 for i=1:length(obst)
     
     if (obst{i}.type == 1)
@@ -225,11 +230,24 @@ for i=1:length(obst)
         error('bad obst{i}.type in GetRepulsiveGradient');
     end
     
-    if d <= param.brep
-        gradfrep = gradfrep + (param.krep*((1/param.brep) - (1/d))*(1/(d^2))*dgrad);
-    end
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % YOUR CODE HERE (PROBLEM 5)
+    %
+    % param.krep and param.brep are the relevant constants
+    %
+    gradfrep = gradfrep + [0 0 0];
+    %
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
 end
+
+function [d,dgrad] = SphereSphere(q,r,p,s)  %problem1? 
+v = q-p;
+v_norm = sqrt(v'*v);
+d = v_norm - (r+s);
+dgrad = v/v_norm;
+
+
 
 
 function world = CreateWorld(drone,goal,obst)
