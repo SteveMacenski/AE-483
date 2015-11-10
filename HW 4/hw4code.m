@@ -4,9 +4,9 @@ function hw4code
 % YOUR CODE HERE (PROBLEM 7)
 %
 % Set parameters
-param.krep = 0;
+param.krep = 1;
 param.brep = 1;
-param.katt = 0;
+param.katt = 10000;
 param.batt = 1;
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -22,7 +22,7 @@ drone.q = [-0.65; 0.65; -0.65];
 % Set goal position
 goal.q = [0.65; -0.65; 0.65];
 
-% Set obstacles
+% % Set obstacles
 obst={};
 obst = AddObstacle_Plane(obst,[-1;-1;-1],[1;0;0]);
 obst = AddObstacle_Plane(obst,[-1;-1;-1],[0;1;0]);
@@ -43,7 +43,7 @@ obst = AddObstacle_Plane(obst,[1;1;1],[0;0;-1]);
 % % Set goal position
 % goal.q = [0.65; -0.65; 0.65];
 % 
-% % Set obstacles
+% Set obstacles
 % obst={};
 % obst = AddObstacle_Plane(obst,[-1;-1;-1],[1;0;0]);
 % obst = AddObstacle_Plane(obst,[-1;-1;-1],[0;1;0]);
@@ -81,7 +81,7 @@ obst = AddObstacle_Plane(obst,[1;1;1],[0;0;-1]);
 % % Set goal position
 % goal.q = [0.65; -0.65; 0.65];
 % 
-% % Set obstacles
+% Set obstacles
 % obst = AddRandomObstacles(25,0.05,0.45,drone,goal,{},param);
 % obst = AddObstacle_Plane(obst,[-1;-1;-1],[1;0;0]);
 % obst = AddObstacle_Plane(obst,[-1;-1;-1],[0;1;0]);
@@ -127,10 +127,12 @@ while (1)
     gradf = GetGradient(drone,goal,obst,param);
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % YOUR CODE HERE (PROBLEM 6)
-    %
     % Do gradient descent (i.e., take a step)
-    dq = [0;0;0];%%deelte and replace
+    dq = -param.dt*(param.kdescent*gradf);
+    dqnorm = sqrt(dq'*dq);
+    if (dqnorm > param.bdescent)
+        dq = param.bdescent*(dq/dqnorm)
+    end
     drone.q = drone.q+dq;
     %
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -178,7 +180,7 @@ function [d,dgrad] = SpherePlane(q,r,p,z)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 
 d = z'*(p-q) - r;
-dgrad = z';
+dgrad = z;
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -225,8 +227,8 @@ for i=1:length(obst)
         error('bad obst{i}.type in GetRepulsiveGradient');
     end
     
-    if d <= param.brep
-        gradfrep = gradfrep + (param.krep*((1/param.brep) - (1/d))*(1/(d^2))*dgrad);
+    if (d <= param.brep)
+        gradfrep = gradfrep + (param.krep*((1/param.brep)-(1/d))*(1/(d^2))*dgrad);
     end
     
 end
