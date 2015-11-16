@@ -29,17 +29,19 @@ param.kdescent = 1;
 param.bdescent = 1;
 % Set goal position
 goal.q = [2; 0; -1];
-obst = {};
-p = [1 0 -.8]';
-s = .1;
 
-obst = AddObstacle_Sphere(obst,p,s);
+function obst = AddObstacle_Sphere(obst,p,s)
+onew.type = 1;
+onew.p = p;
+onew.s = s;
+onew.v = [0;0;0];
+obst{end+1}=onew;
 
 drone.r = .2;
 param.krep = 1;
 param.brep = .2;
 
-
+end
 
 
 %% Attractive Function
@@ -58,12 +60,4 @@ y_des = x_nom(2);
 z_des = x_nom(3);
 yaw_des = 0;
 
-end
-
-function obst = AddObstacle_Sphere(obst,p,s)
-onew.type = 1;
-onew.p = p;
-onew.s = s;
-onew.v = [0;0;0];
-obst{end+1}=onew;
 end

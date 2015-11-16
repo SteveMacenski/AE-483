@@ -1,7 +1,6 @@
 function u=Outer(t,x,dt)
 
 persistent K1 K2 K3
-
 %%% MEASUREMENT
 x=MoCap(x); % full state [x;y;z;vx;vy;vz;theta_3;theta_2;theta_1;p;q;r]
 
@@ -16,8 +15,8 @@ u_nom=[0;0;0;m*g];
 delta_roll=0;
 delta_pitch=0;
 delta_thrust=m*g;
-Kx = -[.1952 .2446];
-Ky = -[-.1952 -.2446];
+Kx = [.1952 .2446];
+Ky = [-.1952 -.2446];
 Kz = [-4.3112 -2.4473];
 
 [x_des, y_des, z_des, yaw_des] = planner(x,t);

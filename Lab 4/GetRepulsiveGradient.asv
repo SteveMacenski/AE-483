@@ -1,0 +1,71 @@
+
+function [d,dgrad] = SphereSphere(q,r,p,s)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% YOUR CODE HERE (PROBLEM 1)
+d = norm(q-p)-(r+s);
+dgrad = ((q-p)/norm(q-p))';
+
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function [d,dgrad] = SpherePlane(q,r,p,z)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% YOUR CODE HERE (PROBLEM 2)
+d = z'*(p-q)-r;
+dgrad = z';
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function [d,dgrad] = SphereHotDog(q,r,p1,p2,s)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% YOUR CODE HERE (PROBLEM 3)
+gamma = (p2-p1)/(norm(p2-p1));
+w = q-p1;
+t = gamma'*w;
+
+if t<0
+  p_closest = p1;
+  d = norm(q-p_closest)-(r+s);
+  dgrad = ((q-p_closest)/norm(q-p_closest))'; 
+  
+elseif (t>0 && t<norm(p2-p1))
+  p_closest = p1+gamma;
+  d = norm(q-p_closest)-(r+s);
+  dgrad = ((q-p_closest)/norm(q-p_closest))';
+  
+else
+  p_closest = p2;
+  d = norm(q-p_closest)-(r+s);
+  dgrad = ((q-p_closest)/norm(q-p_closest))';
+
+end
+
+function gradfrep = GetRepulsiveGradient(drone,obst,param)
+gradfrep = [0 0 0];
+for i=1:length(obst)
+    
+    if (obst{i}.type == 1)
+        [d,dgrad] = SphereSphere(drone.q,drone.r,obst{i}.p,obst{i}.s);
+    elseif (obst{i}.type == 2)
+        [d,dgrad] = SphereHotDog(drone.q,drone.r,obst{i}.p1,obst{i}.p2,obst{i}.s);
+    elseif (obst{i}.type == 3)
+        [d,dgrad] = SpherePlane(drone.q,drone.r,obst{i}.p,obst{i}.z);
+    else
+        error('bad obst{i}.type in GetRepulsiveGradient');
+    end
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % YOUR CODE HERE (PROBLEM 5)
+    %
+    % param.krep and param.brep are the relevant constants
+    %
+      if d<=param.brep
+        gradfrep_i = -( param.krep*((1/d)-(1/param.brep)).*(1/d.^2)*dgrad);
+      else
+        gradfrep_i = [0 0 0];
+      end
+      gradfrep=gradfrep+gradfrep_i;
+    %
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+end
