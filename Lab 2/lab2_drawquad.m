@@ -3,7 +3,7 @@ function [output] = lab2_drawquad()
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 load('QuadTestStandData.mat'); 
-%params.movie_filename = 'quad.avi';
+params.movie_filename = 'quad.avi';
 
 max_t = 25.4132000000000;
 t = DrayMacenskiFester(:,1);
@@ -48,34 +48,46 @@ xlabel('x'); ylabel('y'); zlabel('z');
 drawnow;
 pause(0.5);
 
+% ANIMATE THE RESULTS
 i = 1;
-% myV = VideoWriter(params.movie_filename);
-% myV.Quality = 100;
-% open(myV);
+%tic;
+myV = VideoWriter(params.movie_filename);
+myV.Quality = 100;
+open(myV);
 
 while (i<length(t)-1)
-
+    %if (toc > dt(i))
+        %tic;
         i = i+1;
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % YOUR CODE HERE TO COMPUTE p2   it is easiest to first compute p0
+
         p0 = rotation(theta(i))*p1;
+        
         p2 = [1 0 0;...
               0 -1 0;...
               0 0 -1]*p0;        
-
+        
+        % UPDATE GRAPHICS OBJECT VERTICES
         set(h,'Vertices',p2');
         set(hTitle,'string',sprintf('t = %4.2f',t(i)));
         drawnow;
 
-        % frame = getframe(gcf);
-        % writeVideo(myV,frame);
+         frame = getframe(gcf);
+         writeVideo(myV,frame);
+
+    %end
 end
- %close(myV);
+close(myV);
 end %%% END lab2_drawquad()
 
 
 
 function R = rotation(phi)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% YOUR CODE HERE TO COMPUTE ROTATION MATRIX R_1^0 FROM ZYX Euler Angles
 
-R = [cos(phi) 0 sin(phi);...
+R = [ cos(phi) 0 sin(phi);...
      0 1 0;...
      -sin(phi) 0 cos(phi)];
 
